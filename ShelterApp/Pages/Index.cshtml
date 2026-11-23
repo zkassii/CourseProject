@@ -1,0 +1,10 @@
+﻿@page
+@model IndexModel
+@{ ViewData["Title"] = "Главная"; }
+
+<div class="card p-5 text-center">
+    <h1>Приют для бездомных животных «Хвостики»</h1>
+    <p class="lead mt-3">Здесь вы можете найти друга и подать заявку, чтобы забрать его домой.</p>
+    <p>Сейчас ищут дом: <strong>@Model.ReadyCount</strong></p>
+    <div><a href="/Animals" class="btn btn-primary btn-lg">Смотреть каталог</a></div>
+</div>

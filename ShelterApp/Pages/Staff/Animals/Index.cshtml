@@ -1,0 +1,58 @@
+﻿@page
+@model ShelterApp.Pages.Staff.Animals.IndexModel
+@{ ViewData["Title"] = "Животные"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Животные</h1>
+    <a asp-page="/Staff/Animals/Edit" class="btn btn-primary">Добавить животное</a>
+</div>
+
+@if (TempData["Ok"] is string ok) { <div class="alert alert-success">@ok</div> }
+@if (TempData["Error"] is string err) { <div class="alert alert-danger">@err</div> }
+
+<form method="get" class="filter-box mb-3">
+    <div class="row g-2">
+        <div class="col-md-6">
+            <input type="text" name="Search" value="@Model.Search" class="form-control" placeholder="Кличка, вид или порода" />
+        </div>
+        <div class="col-md-3">
+            <select name="Status" class="form-select">
+                <option value="" disabled hidden selected="@(string.IsNullOrEmpty(Model.Status))">Статус</option>
+                @foreach (var st in AnimalStatus.All)
+                {
+                    <option value="@st" selected="@(Model.Status == st)">@st</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Найти</button>
+            <a href="/Staff/Animals" class="btn btn-secondary">Сбросить</a>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr><th>Кличка</th><th>Вид, порода</th><th>Пол</th><th>Возраст</th><th>Статус</th><th>Вольер</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Items)
+            {
+                <tr>
+                    <td><a asp-page="/Animals/Details" asp-route-id="@a.AnimalId">@a.Name</a></td>
+                    <td>@a.Species@(string.IsNullOrEmpty(a.Breed) ? "" : ", " + a.Breed)</td>
+                    <td>@a.Gender</td>
+                    <td>@AnimalHelper.AgeText(a.BirthDate)</td>
+                    <td><span class="status-badge @AnimalHelper.StatusClass(a.Status)">@a.Status</span></td>
+                    <td>@(a.Enclosure?.Number ?? "—")</td>
+                    <td class="text-end text-nowrap">
+                        <a asp-page="/Staff/Animals/Edit" asp-route-id="@a.AnimalId" class="btn btn-outline-primary btn-sm">Изменить</a>
+                        <partial name="_Confirm" model='new ConfirmModel("Удалить", "Delete", a.AnimalId, "Удалить " + a.Name + "?")' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (Model.Items.Count == 0) { <p class="text-muted">Животные не найдены.</p> }

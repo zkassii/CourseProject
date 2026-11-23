@@ -1,0 +1,50 @@
+﻿@page
+@model ShelterApp.Pages.Staff.Enclosures.IndexModel
+@{ ViewData["Title"] = "Вольеры"; }
+
+<h1 class="mb-3">Вольеры</h1>
+
+@if (TempData["Error"] is string err) { <div class="alert alert-danger">@err</div> }
+
+<div class="card p-3 mb-4">
+    <form method="post" asp-page-handler="Add" class="row g-3 align-items-start">
+        <div class="col-md-4">
+            <label asp-for="Input.Number" class="form-label"></label>
+            <input asp-for="Input.Number" class="form-control" />
+            <span asp-validation-for="Input.Number" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Input.Capacity" class="form-label"></label>
+            <input asp-for="Input.Capacity" class="form-control" />
+            <span asp-validation-for="Input.Capacity" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 pt-md-4">
+            <button type="submit" class="btn btn-primary mt-md-1">Добавить вольер</button>
+        </div>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead><tr><th>Номер</th><th>Вместимость</th><th>Занято</th><th>Свободно</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var e in Model.Items)
+            {
+                <tr>
+                    <td>@e.Number</td>
+                    <td>@e.Capacity</td>
+                    <td>@e.Occupied</td>
+                    <td>@(e.Capacity - e.Occupied)</td>
+                    <td class="text-end text-nowrap">
+                        <a asp-page="/Staff/Enclosures/Edit" asp-route-id="@e.EnclosureId" class="btn btn-outline-primary btn-sm">Изменить</a>
+                        <partial name="_Confirm" model='new ConfirmModel("Удалить", "Delete", e.EnclosureId, "Удалить вольер " + e.Number + "?")' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

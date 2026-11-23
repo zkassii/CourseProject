@@ -1,0 +1,60 @@
+﻿@page
+@model ShelterApp.Pages.Vet.Records.IndexModel
+@{ ViewData["Title"] = "Ветеринарные записи"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Ветеринарные записи</h1>
+    <a asp-page="/Vet/Records/Edit" class="btn btn-primary">Добавить запись</a>
+</div>
+
+<form method="get" class="filter-box mb-3">
+    <div class="row g-2">
+        <div class="col-md-5">
+            <select name="AnimalId" class="form-select">
+                <option value="" disabled hidden selected="@(Model.AnimalId == null)">Животное</option>
+                @foreach (var a in Model.AnimalList)
+                {
+                    <option value="@a.Value" selected="@(Model.AnimalId?.ToString() == a.Value)">@a.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select name="RecordType" class="form-select">
+                <option value="" disabled hidden selected="@(string.IsNullOrEmpty(Model.RecordType))">Тип записи</option>
+                @foreach (var t in VetRecordTypes.All)
+                {
+                    <option value="@t" selected="@(Model.RecordType == t)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Найти</button>
+            <a href="/Vet/Records" class="btn btn-secondary">Сбросить</a>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr><th>Дата</th><th>Животное</th><th>Тип</th><th>Примечание</th><th>Ветеринар</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Items)
+            {
+                <tr>
+                    <td class="text-nowrap">@r.RecordDate.ToString("dd.MM.yyyy")</td>
+                    <td><a asp-page="/Animals/Details" asp-route-id="@r.AnimalId">@r.Animal?.Name</a></td>
+                    <td>@r.RecordType</td>
+                    <td>@r.Notes</td>
+                    <td>@r.User?.FullName</td>
+                    <td class="text-end text-nowrap">
+                        <a asp-page="/Vet/Records/Edit" asp-route-id="@r.VetRecordId" class="btn btn-outline-primary btn-sm">Изменить</a>
+                        <partial name="_Confirm" model='new ConfirmModel("Удалить", "Delete", r.VetRecordId, "Удалить запись?")' />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (Model.Items.Count == 0) { <p class="text-muted">Записей не найдено.</p> }

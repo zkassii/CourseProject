@@ -1,0 +1,59 @@
+﻿@page
+@model ShelterApp.Pages.Admin.Users.IndexModel
+@{ ViewData["Title"] = "Пользователи"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Пользователи</h1>
+    <a asp-page="/Admin/Users/Edit" class="btn btn-primary">Добавить пользователя</a>
+</div>
+
+@if (TempData["Ok"] is string ok) { <div class="alert alert-success">@ok</div> }
+@if (TempData["Error"] is string err) { <div class="alert alert-danger">@err</div> }
+
+<form method="get" class="filter-box mb-3">
+    <div class="row g-2">
+        <div class="col-md-5">
+            <input type="text" name="Search" value="@Model.Search" class="form-control" placeholder="ФИО или почта" />
+        </div>
+        <div class="col-md-4">
+            <select name="RoleId" class="form-select">
+                <option value="" disabled hidden selected="@(Model.RoleId == null)">Роль</option>
+                @foreach (var r in Model.RoleList)
+                {
+                    <option value="@r.Value" selected="@(Model.RoleId?.ToString() == r.Value)">@r.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Найти</button>
+            <a href="/Admin/Users" class="btn btn-secondary">Сбросить</a>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr><th>ФИО</th><th>Почта</th><th>Телефон</th><th>Роль</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.Items)
+            {
+                <tr>
+                    <td>@u.FullName@(u.UserId == Model.CurrentUserId ? " (вы)" : "")</td>
+                    <td>@u.Email</td>
+                    <td>@(string.IsNullOrEmpty(u.Phone) ? "—" : u.Phone)</td>
+                    <td>@u.Role?.Name</td>
+                    <td class="text-end text-nowrap">
+                        <a asp-page="/Admin/Users/Edit" asp-route-id="@u.UserId" class="btn btn-outline-primary btn-sm">Изменить</a>
+                        @if (u.UserId != Model.CurrentUserId)
+                        {
+                            <partial name="_Confirm" model='new ConfirmModel("Удалить", "Delete", u.UserId, "Удалить пользователя " + u.FullName + "?")' />
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (Model.Items.Count == 0) { <p class="text-muted">Пользователи не найдены.</p> }

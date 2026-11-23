@@ -1,0 +1,81 @@
+﻿@page "{id:int?}"
+@model ShelterApp.Pages.Staff.Animals.EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Новое животное" : "Изменение животного";
+}
+
+<h1 class="mb-3">@ViewData["Title"]</h1>
+
+<div class="card p-4">
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Input.AnimalId" />
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Input.Name" class="form-label"></label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.Species" class="form-label"></label>
+                <input asp-for="Input.Species" class="form-control" placeholder="Например: Собака" />
+                <span asp-validation-for="Input.Species" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.Breed" class="form-label"></label>
+                <input asp-for="Input.Breed" class="form-control" />
+                <span asp-validation-for="Input.Breed" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.Gender" class="form-label"></label>
+                <select asp-for="Input.Gender" class="form-select">
+                    <option value="" disabled hidden selected="@(string.IsNullOrEmpty(Model.Input.Gender))">Выберите пол</option>
+                    <option value="Самец">Самец</option>
+                    <option value="Самка">Самка</option>
+                </select>
+                <span asp-validation-for="Input.Gender" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.BirthDate" class="form-label"></label>
+                <input asp-for="Input.BirthDate" class="form-control" />
+                <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.IntakeDate" class="form-label"></label>
+                <input asp-for="Input.IntakeDate" class="form-control" />
+                <span asp-validation-for="Input.IntakeDate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.Status" class="form-label"></label>
+                <select asp-for="Input.Status" asp-items="new SelectList(AnimalStatus.All)" class="form-select"></select>
+                <span asp-validation-for="Input.Status" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.EnclosureId" class="form-label"></label>
+                <select asp-for="Input.EnclosureId" asp-items="Model.Enclosures" class="form-select">
+                    <option value="">Без вольера</option>
+                </select>
+                <span asp-validation-for="Input.EnclosureId" class="text-danger"></span>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Фотография</label>
+                @if (!string.IsNullOrEmpty(Model.CurrentPhoto))
+                {
+                    <div class="mb-2"><img src="@Model.CurrentPhoto" alt="Фото" style="max-height:120px; border-radius:8px;" /></div>
+                }
+                <input type="file" name="Photo" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a asp-page="/Staff/Animals/Index" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

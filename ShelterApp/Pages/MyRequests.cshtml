@@ -1,0 +1,42 @@
+﻿@page
+@model MyRequestsModel
+@{ ViewData["Title"] = "Мои заявки"; }
+
+<h1 class="mb-3">Мои заявки</h1>
+
+@if (TempData["Ok"] is string ok) { <div class="alert alert-success">@ok</div> }
+@if (TempData["Error"] is string err) { <div class="alert alert-danger">@err</div> }
+
+@if (Model.Items.Count == 0)
+{
+    <div class="card p-4 text-center">
+        <p class="mb-3">У вас пока нет заявок.</p>
+        <div><a href="/Animals" class="btn btn-primary">Выбрать животное в каталоге</a></div>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>№</th><th>Животное</th><th>Дата подачи</th><th>Статус</th><th>Дата передачи</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var (r, num) in Model.Items.Select((x, i) => (x, i + 1)))
+                {
+                    <tr>
+                        <td>@num</td>
+                        <td>@r.Animal?.Name</td>
+                        <td>@r.CreatedAt.ToString("dd.MM.yyyy")</td>
+                        <td><span class="status-badge @RequestHelper.StatusClass(r.Status)">@r.Status</span></td>
+                        <td>@(r.TransferDate?.ToString("dd.MM.yyyy") ?? "—")</td>
+                        <td class="text-end text-nowrap">
+                            @if (r.Status == RequestStatus.New)
+                            {
+                                <partial name="_Confirm" model='new ConfirmModel("Отменить", "Cancel", r.RequestId, "Отменить заявку?")' />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

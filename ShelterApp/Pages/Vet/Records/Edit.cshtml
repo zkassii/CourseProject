@@ -1,0 +1,52 @@
+﻿@page "{id:int?}"
+@model ShelterApp.Pages.Vet.Records.EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Новая запись" : "Изменение записи";
+}
+
+<h1 class="mb-3">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="card p-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Input.VetRecordId" />
+
+                <div class="mb-3">
+                    <label asp-for="Input.AnimalId" class="form-label"></label>
+                    <select asp-for="Input.AnimalId" asp-items="Model.AnimalList" class="form-select">
+                        <option value="" disabled hidden selected="@(Model.Input.AnimalId == null)">Выберите животное</option>
+                    </select>
+                    <span asp-validation-for="Input.AnimalId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.RecordType" class="form-label"></label>
+                    <select asp-for="Input.RecordType" asp-items="new SelectList(VetRecordTypes.All)" class="form-select">
+                        <option value="" disabled hidden selected="@(string.IsNullOrEmpty(Model.Input.RecordType))">Выберите тип</option>
+                    </select>
+                    <span asp-validation-for="Input.RecordType" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.RecordDate" class="form-label"></label>
+                    <input asp-for="Input.RecordDate" class="form-control" />
+                    <span asp-validation-for="Input.RecordDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Notes" class="form-label"></label>
+                    <textarea asp-for="Input.Notes" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Input.Notes" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <a asp-page="/Vet/Records/Index" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,9 @@
+﻿@model ShelterApp.Models.ConfirmModel
+
+<details class="confirm">
+    <summary class="@Model.Css">@Model.Label</summary>
+    <form method="post" asp-page-handler="@Model.Handler" asp-route-id="@Model.Id" class="confirm-box">
+        <span>@Model.Question</span>
+        <button type="submit" class="@Model.Css">Да</button>
+    </form>
+</details>
